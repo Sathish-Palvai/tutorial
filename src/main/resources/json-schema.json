@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "page": { "type": "integer" },
+      "total_pages": { "type": "integer" },
+      "employee_data": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "first_name": { "type": "string" },
+            "last_name": { "type": "string" },
+            "designation": { "type": "string" },
+            "location": { "type": "string" }
+          },
+          "required": ["id", "first_name", "last_name", "designation", "location"]
+        }
+      },
+      "company": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "Address": { "type": "string" }
+        },
+        "required": ["name", "Address"]
+      }
+    },
+    "required": ["page", "total_pages", "employee_data", "company"]
+  }
+  

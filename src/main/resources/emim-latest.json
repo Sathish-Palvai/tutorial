@@ -1,0 +1,1140 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "http://webservices.ieso.ca/emim-types/#",
+  "definitions": {
+    "ActAsMarketParticipantType": {
+      "type": "object",
+      "required": ["participant", "user"],
+      "properties": {
+        "participant": { "type": "string", "maxLength": 12, "minLength": 2 },
+        "user": { "type": "string", "maxLength": 12, "minLength": 2 },
+        "readOnly": { "type": "boolean" }
+      }
+    },
+    "QueryStandingType": {
+      "type": "object",
+      "required": ["dayOfWeek"],
+      "properties": {
+        "dayOfWeek": { "$ref": "#/definitions/DayOfWeekType" },
+        "expiryDate": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "QueryDateType": {
+      "type": "object",
+      "properties": {
+        "deliveryDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "standing": { "$ref": "#/definitions/QueryStandingType" }
+      },
+      "oneOf": [{ "required": ["deliveryDate"] }, { "required": ["standing"] }]
+    },
+    "ScheduleBidQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "Date", "ScheduleType", "Hour"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "ScheduleType": { "$ref": "#/definitions/ScheduleTypeType" },
+        "ResourceName": { "type": "string", "maxLength": 32, "minLength": 2 },
+        "Hour": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "MarketStatusQuery": {
+      "type": "object",
+      "properties": {}
+    },
+    "ResourceQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "BidCategory", "DeliveryDate"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "BidCategory": { "$ref": "#/definitions/BidCategoryType" },
+        "DeliveryDate": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "UploadStandingType": {
+      "type": "object",
+      "required": ["DayOfWeek"],
+      "properties": {
+        "DayOfWeek": { "$ref": "#/definitions/DayOfWeekType" },
+        "ExpiryDate": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "UploadDateType": {
+      "type": "object",
+      "properties": {
+        "DeliveryDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "Standing": { "$ref": "#/definitions/UploadStandingType" }
+      },
+      "oneOf": [{ "required": ["DeliveryDate"] }, { "required": ["Standing"] }]
+    },
+    "BilateralSubmitHourlyType": {
+      "type": "object",
+      "required": [
+        "Hour",
+        "Quantity",
+        "OperatingReserveCredit",
+        "CapacityReserveCredit",
+        "OperatingReserveDebit",
+        "CapacityReserveDebit",
+        "DamSettlementCredit",
+        "GenFailureChargeRebate",
+        "RtmSettlementCredit",
+        "IntertieFailureChargeRebate",
+        "IogSettlementCredit"
+      ],
+      "properties": {
+        "Hour": { "type": "integer", "minimum": 1, "maximum": 24 },
+        "TiePoint": { "type": "string" },
+        "Quantity": { "type": "number" },
+        "OperatingReserveCredit": { "type": "boolean" },
+        "CapacityReserveCredit": { "type": "boolean" },
+        "OperatingReserveDebit": { "type": "boolean" },
+        "CapacityReserveDebit": { "type": "boolean" },
+        "DamSettlementCredit": { "type": "boolean" },
+        "GenFailureChargeRebate": { "type": "boolean" },
+        "RtmSettlementCredit": { "type": "boolean" },
+        "IntertieFailureChargeRebate": { "type": "boolean" },
+        "IogSettlementCredit": { "type": "boolean" }
+      }
+    },
+    "BilateralBidSubmitType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "ParticipantSeller",
+        "ParticipantBuyer",
+        "MarketType",
+        "PbcPercentFlag",
+        "ResourceName",
+        "Hourly"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/UploadDateType" },
+        "ParticipantSeller": { "type": "string" },
+        "ParticipantBuyer": { "type": "string" },
+        "MarketType": { "$ref": "#/definitions/MarketTypeType" },
+        "PbcPercentFlag": { "type": "boolean" },
+        "ResourceName": { "type": "string" },
+        "Hourly": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/BilateralSubmitHourlyType" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "BilateralBidSetType": {
+      "type": "object",
+      "properties": {
+        "BilateralBidSubmit": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/BilateralBidSubmitType" },
+          "minItems": 0
+        }
+      }
+    },
+    "VersionType": {
+      "type": "object",
+      "required": ["Major", "Minor", "Patch"],
+      "properties": {
+        "Major": { "type": "integer" },
+        "Minor": { "type": "integer" },
+        "Patch": { "type": "integer" }
+      }
+    },
+    "HealthCheckInfoType": {
+      "type": "object",
+      "required": ["Version", "Status"],
+      "properties": {
+        "Version": { "$ref": "#/definitions/VersionType" },
+        "Status": { "type": "string" }
+      }
+    },
+    "HealthCheckQuery": {
+      "type": "object",
+      "properties": {}
+    },
+    "ActAsMarketParticipantQueryType": {
+      "type": "object",
+      "required": ["DeliveryDate"],
+      "properties": {
+        "DeliveryDate": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "PriceQuantityType": {
+      "type": "object",
+      "required": ["Price", "Quantity"],
+      "properties": {
+        "Price": {
+          "type": "number",
+          "minimum": -9999.99,
+          "maximum": 9999.99,
+          "multipleOf": 0.01
+        },
+        "Quantity": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 9999.9,
+          "multipleOf": 0.1
+        }
+      }
+    },
+    "OperatingReserveSubmitHourlyType": {
+      "type": "object",
+      "required": ["Hour", "PriceQuantity", "ReserveLoadPoint"],
+      "properties": {
+        "Hour": { "type": "integer", "minimum": 1, "maximum": 24 },
+        "TiePoint": { "type": "string", "minLength": 2, "maxLength": 12 },
+        "PriceQuantity": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PriceQuantityType" },
+          "maxItems": 5,
+          "minItems": 2
+        },
+        "ReserveLoadPoint": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 9999.9,
+          "multipleOf": 0.1
+        },
+        "Reason": { "type": "string", "minLength": 2, "maxLength": 12 },
+        "OtherReason": { "type": "string", "minLength": 2, "maxLength": 128 }
+      }
+    },
+    "OperatingReserveBidSubmitType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "BidOffer",
+        "ResourceName",
+        "ReserveClass",
+        "Hourly"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/UploadDateType" },
+        "BidOffer": { "$ref": "#/definitions/ReserveBidOfferType" },
+        "ResourceName": { "type": "string" },
+        "ReserveClass": {
+          "type": "string",
+          "enum": ["10S", "10N", "30R"]
+        },
+        "Hourly": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/OperatingReserveSubmitHourlyType" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "OperatingReserveBidSetType": {
+      "type": "object",
+      "properties": {
+        "OperatingReserveBidSubmit": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/OperatingReserveBidSubmitType" },
+          "minItems": 0
+        }
+      }
+    },
+    "RealtimeEnergyBidQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "Date", "BidOffer", "Hour"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "BidOffer": { "$ref": "#/definitions/EnergyBidOfferType" },
+        "ResourceName": { "type": "string" },
+        "Hour": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "OperatingReserveBidQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "Date", "BidOffer", "Hour"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "BidOffer": { "$ref": "#/definitions/ReserveBidOfferType" },
+        "ResourceName": { "type": "string" },
+        "ReserveClass": {
+          "type": "string",
+          "enum": ["10S", "10N", "30R"]
+        },
+        "Hour": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "MessageType": {
+      "type": "object",
+      "required": ["Severity", "Code", "Description"],
+      "properties": {
+        "Severity": { "$ref": "#/definitions/SeverityType" },
+        "Code": { "type": "string" },
+        "Description": { "type": "string" },
+        "Hour": { "type": "integer" }
+      }
+    },
+    "BidProcessingStatusType": {
+      "type": "object",
+      "required": ["SubmissionTime", "TransactionId", "Message"],
+      "properties": {
+        "SubmissionTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "TransactionId": { "type": "string" },
+        "Message": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MessageType" },
+          "minItems": 1
+        }
+      }
+    },
+    "MarketMessageType": {
+      "type": "object",
+      "required": ["MessageTime", "MessageClass", "MessageText"],
+      "properties": {
+        "MessageTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "MessageClass": { "$ref": "#/definitions/MessageClassType" },
+        "MessageText": { "type": "string" }
+      }
+    },
+    "MarketMessageSetType": {
+      "type": "object",
+      "required": ["SyncTime"],
+      "properties": {
+        "SyncTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "MarketMessage": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MarketMessageType" },
+          "minItems": 0
+        }
+      }
+    },
+    "MarketMessageQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "StartTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "LinkedForebayType": {
+      "type": "object",
+      "required": ["DownstreamForebayName", "TimeLag", "MwRatio"],
+      "properties": {
+        "DownstreamForebayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 32
+        },
+        "TimeLag": { "type": "integer", "minimum": 0, "maximum": 9999 },
+        "MwRatio": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 9999.99,
+          "multipleOf": 0.01
+        }
+      }
+    },
+    "ForebayBidSubmitType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "Date", "ForebayName"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/UploadDateType" },
+        "ForebayName": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "LinkedForebay": { "$ref": "#/definitions/LinkedForebayType" },
+        "MinDailyEnergyLimit": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 999999.9,
+          "multipleOf": 0.1
+        },
+        "MaxDailyEnergyLimit": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 999999.9,
+          "multipleOf": 0.1
+        },
+        "MaxDailyEnergyLimitReason": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 12
+        },
+        "Reason": { "type": "string", "minLength": 2, "maxLength": 12 },
+        "OtherReason": { "type": "string", "minLength": 2, "maxLength": 128 }
+      }
+    },
+    "ForebayBidSetType": {
+      "type": "object",
+      "properties": {
+        "ForebayBidSubmit": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ForebayBidSubmitType" },
+          "minItems": 0
+        }
+      }
+    },
+    "ScheduleSubmitHourlyType": {
+      "type": "object",
+      "required": ["Hour", "ZeroPrice", "Quantity"],
+      "properties": {
+        "Hour": { "type": "integer" },
+        "ZeroPrice": { "type": "number" },
+        "Quantity": { "type": "number" }
+      }
+    },
+    "ScheduleBidSubmitType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "ScheduleType",
+        "ResourceName",
+        "Hourly"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/UploadDateType" },
+        "ScheduleType": { "$ref": "#/definitions/ScheduleTypeType" },
+        "ResourceName": { "type": "string" },
+        "Hourly": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ScheduleSubmitHourlyType" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "BilateralBidQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "Date", "MarketType", "Hour"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "ParticipantSeller": { "type": "string" },
+        "ParticipantBuyer": { "type": "string" },
+        "MarketType": { "$ref": "#/definitions/MarketTypeType" },
+        "ResourceName": { "type": "string" },
+        "Hour": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "ScheduleBidCancelType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "ScheduleType",
+        "ResourceName",
+        "Hour"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "ScheduleType": { "$ref": "#/definitions/ScheduleTypeType" },
+        "ResourceName": { "type": "string" },
+        "Hour": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "ForebaySetType": {
+      "type": "object",
+      "required": ["DeliveryDate"],
+      "properties": {
+        "DeliveryDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "ForebayName": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 0
+        }
+      }
+    },
+    "ScheduleBidSetType": {
+      "type": "object",
+      "properties": {
+        "ScheduleBidSubmit": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ScheduleBidSubmitType" },
+          "minItems": 0
+        }
+      }
+    },
+    "ForbiddenRegionType": {
+      "type": "object",
+      "required": ["LowerBound", "UpperBound"],
+      "properties": {
+        "LowerBound": { "type": "number" },
+        "UpperBound": { "type": "number" }
+      }
+    },
+    "MinGenBlockDownTimeType": {
+      "type": "object",
+      "required": [
+        "MinGenBlockDownTimeHot",
+        "MinGenBlockDownTimeWarm",
+        "MinGenBlockDownTimeCold"
+      ],
+      "properties": {
+        "MinGenBlockDownTimeHot": { "type": "integer" },
+        "MinGenBlockDownTimeWarm": { "type": "integer" },
+        "MinGenBlockDownTimeCold": { "type": "integer" }
+      }
+    },
+    "LeadTimeType": {
+      "type": "object",
+      "required": ["LeadTimeHot", "LeadTimeWarm", "LeadTimeCold"],
+      "properties": {
+        "LeadTimeHot": { "type": "integer" },
+        "LeadTimeWarm": { "type": "integer" },
+        "LeadTimeCold": { "type": "integer" }
+      }
+    },
+    "RampUpToMlpHotType": {
+      "type": "object",
+      "required": ["EnergyPerRampHourHot"],
+      "properties": {
+        "EnergyPerRampHourHot": {
+          "type": "array",
+          "items": { "type": "number" },
+          "maxItems": 12,
+          "minItems": 1
+        }
+      }
+    },
+    "RampUpToMlpWarmType": {
+      "type": "object",
+      "required": ["EnergyPerRampHourWarm"],
+      "properties": {
+        "EnergyPerRampHourWarm": {
+          "type": "array",
+          "items": { "type": "number" },
+          "maxItems": 12,
+          "minItems": 1
+        }
+      }
+    },
+    "RampUpToMlpColdType": {
+      "type": "object",
+      "required": ["EnergyPerRampHourCold"],
+      "properties": {
+        "EnergyPerRampHourCold": {
+          "type": "array",
+          "items": { "type": "number" },
+          "maxItems": 12,
+          "minItems": 1
+        }
+      }
+    },
+    "RampUpEnergyToMlpType": {
+      "type": "object",
+      "properties": {
+        "RampUpEnergyToMlpHot": { "$ref": "#/definitions/RampUpToMlpHotType" },
+        "RampUpEnergyToMlpWarm": {
+          "$ref": "#/definitions/RampUpToMlpWarmType"
+        },
+        "RampUpEnergyToMlpCold": { "$ref": "#/definitions/RampUpToMlpColdType" }
+      }
+    },
+    "DailyDispatchBidSubmitType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "Date", "ResourceName"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/UploadDateType" },
+        "ResourceName": { "type": "string" },
+        "ForbiddenRegion": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ForbiddenRegionType" },
+          "maxItems": 5,
+          "minItems": 0
+        },
+        "SingleCycleMode": { "type": "boolean" },
+        "MinGenBlockRunTime": { "type": "integer" },
+        "MinLoadingPoint": {
+          "type": "array",
+          "items": { "type": "number" },
+          "maxItems": 4,
+          "minItems": 0
+        },
+        "MinGenBlockDownTime": {
+          "$ref": "#/definitions/MinGenBlockDownTimeType"
+        },
+        "MaxNumOfStartsPerDay": { "type": "integer" },
+        "LeadTime": { "$ref": "#/definitions/LeadTimeType" },
+        "RampUpEnergyToMlp": { "$ref": "#/definitions/RampUpEnergyToMlpType" },
+        "Reason": { "type": "string", "minLength": 2, "maxLength": 12 },
+        "OtherReason": { "type": "string", "minLength": 2, "maxLength": 128 }
+      }
+    },
+    "DailyDispatchBidSetType": {
+      "type": "object",
+      "properties": {
+        "DailyDispatchBidSubmit": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DailyDispatchBidSubmitType" },
+          "minItems": 0
+        }
+      }
+    },
+    "DailyEnergyRampRateType": {
+      "type": "object",
+      "required": [
+        "DailyEnergyRampRateBreakpoint",
+        "DailyEnergyRampRateUp",
+        "DailyEnergyRampRateDown"
+      ],
+      "properties": {
+        "DailyEnergyRampRateBreakpoint": { "type": "number" },
+        "DailyEnergyRampRateUp": { "type": "number" },
+        "DailyEnergyRampRateDown": { "type": "number" }
+      }
+    },
+    "StartUpOfferType": {
+      "type": "object",
+      "properties": {
+        "StartUpOfferHot": { "type": "integer" },
+        "StartUpOfferWarm": { "type": "integer" },
+        "StartUpOfferCold": { "type": "integer" }
+      }
+    },
+    "HourlyEnergyRampRateType": {
+      "type": "object",
+      "required": [
+        "HourlyEnergyRampRateBreakpoint",
+        "HourlyEnergyRampRateUp",
+        "HourlyEnergyRampRateDown"
+      ],
+      "properties": {
+        "HourlyEnergyRampRateBreakpoint": { "type": "number" },
+        "HourlyEnergyRampRateUp": { "type": "number" },
+        "HourlyEnergyRampRateDown": { "type": "number" }
+      }
+    },
+    "RealtimeEnergySubmitHourlyType": {
+      "type": "object",
+      "required": ["Hour", "PriceQuantity"],
+      "properties": {
+        "Hour": { "type": "integer" },
+        "TiePoint": { "type": "string" },
+        "VirtualZoneName": { "type": "string" },
+        "NercTag": { "type": "string" },
+        "CapacityTransaction": { "type": "boolean" },
+        "OperatingReserveRampRate": { "type": "number" },
+        "StartUpOffer": { "$ref": "#/definitions/StartUpOfferType" },
+        "SpeedNoLoadOffer": { "type": "integer" },
+        "MinHourlyOutput": { "type": "number" },
+        "HourlyMustRun": { "type": "number" },
+        "ForecastQuantity": { "type": "number" },
+        "PriceQuantity": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PriceQuantityType" },
+          "maxItems": 20,
+          "minItems": 2
+        },
+        "HourlyEnergyRampRate": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/HourlyEnergyRampRateType" },
+          "maxItems": 5,
+          "minItems": 0
+        },
+        "Reason": { "type": "string", "minLength": 2, "maxLength": 12 },
+        "OtherReason": { "type": "string", "minLength": 2, "maxLength": 128 }
+      }
+    },
+    "RealtimeEnergyBidSubmitType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "BidOffer",
+        "ResourceName",
+        "Hourly"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/UploadDateType" },
+        "BidOffer": { "$ref": "#/definitions/EnergyBidOfferType" },
+        "ResourceName": { "type": "string" },
+        "ThermalState": { "$ref": "#/definitions/ThermalStateType" },
+        "MinDailyEnergyLimit": { "type": "number" },
+        "MaxDailyEnergyLimit": { "type": "number" },
+        "MaxDailyEnergyLimitReason": { "type": "string" },
+        "DailyEnergyRampRate": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DailyEnergyRampRateType" },
+          "maxItems": 5,
+          "minItems": 0
+        },
+        "Hourly": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RealtimeEnergySubmitHourlyType" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "RealtimeEnergyBidSetType": {
+      "type": "object",
+      "properties": {
+        "RealtimeEnergyBidSubmit": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RealtimeEnergyBidSubmitType" },
+          "minItems": 0
+        }
+      }
+    },
+    "ResType": {
+      "type": "object",
+      "required": [
+        "ResourceName",
+        "ResourceType",
+        "ResourceBidType",
+        "ResourceTypeId"
+      ],
+      "properties": {
+        "ResourceName": { "type": "string" },
+        "ResourceType": { "$ref": "#/definitions/ResourceTypeType" },
+        "ResourceBidType": { "$ref": "#/definitions/ResourceBidTypeType" },
+        "ResourceTypeId": { "$ref": "#/definitions/ResourceTypeIdType" }
+      }
+    },
+    "ResourceSetType": {
+      "type": "object",
+      "required": ["DeliveryDate"],
+      "properties": {
+        "DeliveryDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "Resource": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ResType" },
+          "minItems": 0
+        }
+      }
+    },
+    "ForebayQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "DeliveryDate"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "DeliveryDate": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "OperatingReserveCancelHourlyType": {
+      "type": "object",
+      "required": ["Hour"],
+      "properties": {
+        "Hour": { "type": "integer", "minimum": 1, "maximum": 24 },
+        "Reason": { "type": "string", "minLength": 2, "maxLength": 12 },
+        "OtherReason": { "type": "string", "minLength": 2, "maxLength": 128 }
+      }
+    },
+    "OperatingReserveBidCancelType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "BidOffer",
+        "ResourceName",
+        "ReserveClass",
+        "Hourly"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "BidOffer": { "$ref": "#/definitions/ReserveBidOfferType" },
+        "ResourceName": { "type": "string" },
+        "ReserveClass": {
+          "type": "string",
+          "enum": ["10S", "10N", "30R"]
+        },
+        "Hourly": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/OperatingReserveCancelHourlyType" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "MarketDetailType": {
+      "type": "object",
+      "required": ["WindowName", "StartTime", "Active"],
+      "properties": {
+        "WindowName": { "$ref": "#/definitions/WindowNameType" },
+        "StartTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Active": { "type": "boolean" }
+      }
+    },
+    "MarketWindowType": {
+      "type": "object",
+      "required": ["MarketType", "MarketHour", "Market"],
+      "properties": {
+        "MarketType": { "$ref": "#/definitions/MarketTypeType" },
+        "MarketHour": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Market": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MarketDetailType" },
+          "minItems": 1
+        }
+      }
+    },
+    "MarketStatusType": {
+      "type": "object",
+      "required": ["MarketWindow"],
+      "properties": {
+        "MarketWindow": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MarketWindowType" },
+          "minItems": 1
+        }
+      }
+    },
+    "DailyDispatchBidQueryType": {
+      "type": "object",
+      "required": ["ActAsMarketParticipant", "Date", "ResourceName"],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "ResourceName": { "type": "string" }
+      }
+    },
+    "BilateralBidCancelType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "ParticipantSeller",
+        "ParticipantBuyer",
+        "MarketType",
+        "ResourceName",
+        "Hour"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "ParticipantSeller": { "type": "string" },
+        "ParticipantBuyer": { "type": "string" },
+        "MarketType": { "$ref": "#/definitions/MarketTypeType" },
+        "ResourceName": { "type": "string" },
+        "Hour": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "RealtimeEnergyCancelHourlyType": {
+      "type": "object",
+      "required": ["Hour"],
+      "properties": {
+        "Hour": { "type": "integer", "minimum": 1, "maximum": 24 },
+        "Reason": { "type": "string", "minLength": 2, "maxLength": 12 },
+        "OtherReason": { "type": "string", "minLength": 2, "maxLength": 128 }
+      }
+    },
+    "RealtimeEnergyBidCancelType": {
+      "type": "object",
+      "required": [
+        "ActAsMarketParticipant",
+        "Date",
+        "BidOffer",
+        "ResourceName",
+        "Hourly"
+      ],
+      "properties": {
+        "ActAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "Date": { "$ref": "#/definitions/QueryDateType" },
+        "BidOffer": { "$ref": "#/definitions/EnergyBidOfferType" },
+        "ResourceName": { "type": "string" },
+        "Hourly": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/RealtimeEnergyCancelHourlyType" },
+          "maxItems": 24,
+          "minItems": 1
+        }
+      }
+    },
+    "ForebayBidQueryType": {
+      "type": "object",
+      "required": ["actAsMarketParticipant", "date", "forebayName"],
+      "properties": {
+        "actAsMarketParticipant": {
+          "$ref": "#/definitions/ActAsMarketParticipantType"
+        },
+        "date": { "$ref": "#/definitions/QueryDateType" },
+        "forebayName": { "type": "string","minLength": 2, "maxLength": 32 }
+      },
+      "additionalProperties": false
+    },
+    "ActAsMarketParticipantSetType": {
+      "type": "object",
+      "properties": {
+        "ActAsMarketParticipant": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ActAsMarketParticipantType" },
+          "minItems": 0
+        }
+      }
+    },
+    "DayOfWeekType": {
+      "type": "string",
+      "enum": ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN", "ALL"]
+    },
+    "ScheduleTypeType": {
+      "type": "string",
+      "enum": ["SELFGEN", "INTGEN", "NONDLOAD"]
+    },
+    "BidCategoryType": {
+      "type": "string",
+      "enum": ["BILATERAL", "DDD", "OPERATING-RESERVE", "RTEM", "SCHEDULE"]
+    },
+    "MarketTypeType": {
+      "type": "string",
+      "enum": ["DAY-AHEAD", "REALTIME"]
+    },
+    "ReserveBidOfferType": {
+      "type": "string",
+      "enum": ["GENERATOR", "DISPLOAD", "PSEUDO-UNIT", "OFF-TAKE", "INJECTION"]
+    },
+    "EnergyBidOfferType": {
+      "type": "string",
+      "enum": [
+        "GENERATOR",
+        "LOAD",
+        "PSEUDO-UNIT",
+        "PRICE-RESPONSIVE-LOAD",
+        "VIRTUAL-GENERATOR",
+        "VIRTUAL-LOAD",
+        "OFF-TAKE",
+        "INJECTION"
+      ]
+    },
+    "SeverityType": {
+      "type": "string",
+      "enum": ["INFO", "WARN", "ERROR"]
+    },
+    "MessageClassType": {
+      "type": "string",
+      "enum": ["NORMAL", "URGENT", "EMERGENCY"]
+    },
+    "ThermalStateType": {
+      "type": "string",
+      "enum": ["HOT", "WARM", "COLD"]
+    },
+    "ResourceTypeType": {
+      "type": "string",
+      "enum": [
+        "NQS_NUCLEAR",
+        "NQS_OTHER",
+        "QS_OTHER",
+        "PSEUDO_UNIT",
+        "COMBUSTION_TURBINE_PSU",
+        "STEAM_TURBINE_PSU",
+        "COMBUSTION_TURBINE_NON_PSU",
+        "STEAM_TURBINE_NON_PSU",
+        "HYDRO_CASCADE",
+        "HYDRO_NON_CASCADE",
+        "VARIABLE_GENERATION",
+        "NON_DISPATCHABLE_GENERATION",
+        "NON_DISPATCHABLE_LOAD",
+        "DISPATCHABLE_LOAD",
+        "HOURLY_DEMAND_RESPONSE",
+        "PRICE_RESPONSIVE_LOAD",
+        "VIRTUAL_TRADER_SUPPLY",
+        "VIRTUAL_TRADER_LOAD",
+        "ENERGY_IMPORT",
+        "ENERGY_EXPORT"
+      ]
+    },
+    "ResourceBidTypeType": {
+      "type": "string",
+      "enum": ["REG", "SELF", "IGEN", "NDLD", "VIRTUAL"]
+    },
+    "ResourceTypeIdType": {
+      "type": "string",
+      "enum": ["GEN", "LOAD", "MSP", "CSP_SINK", "CSP_SOURCE", "PSU", "PRL"]
+    },
+    "WindowNameType": {
+      "type": "string",
+      "enum": [
+        "HOURLY_INITIAL",
+        "HOURLY_RESTRICTED",
+        "HOURLY_UNRESTRICTED1",
+        "HOURLY_UNRESTRICTED2",
+        "HOURLY_MANDATORY",
+        "HOURLY_CLOSE",
+        "DAILY_INITIAL",
+        "DAILY_RESTRICTED",
+        "DAILY_MANDATORY",
+        "DAILY_CLOSE"
+      ]
+    }
+  },
+  "properties": {
+    "MarketStatusQuery": { "$ref": "#/definitions/MarketStatusQuery" },
+    "HealthCheckQuery": { "$ref": "#/definitions/HealthCheckQuery" },
+    "ScheduleBidQuery": { "$ref": "#/definitions/ScheduleBidQueryType" },
+    "ResourceQuery": { "$ref": "#/definitions/ResourceQueryType" },
+    "BilateralBidSet": { "$ref": "#/definitions/BilateralBidSetType" },
+    "HealthCheckInfo": { "$ref": "#/definitions/HealthCheckInfoType" },
+    "ActAsMarketParticipantQuery": {
+      "$ref": "#/definitions/ActAsMarketParticipantQueryType"
+    },
+    "OperatingReserveBidSet": {
+      "$ref": "#/definitions/OperatingReserveBidSetType"
+    },
+    "RealtimeEnergyBidQuery": {
+      "$ref": "#/definitions/RealtimeEnergyBidQueryType"
+    },
+    "OperatingReserveBidQuery": {
+      "$ref": "#/definitions/OperatingReserveBidQueryType"
+    },
+    "BidProcessingStatus": { "$ref": "#/definitions/BidProcessingStatusType" },
+    "MarketMessageSet": { "$ref": "#/definitions/MarketMessageSetType" },
+    "MarketMessageQuery": { "$ref": "#/definitions/MarketMessageQueryType" },
+    "ForebayBidSet": { "$ref": "#/definitions/ForebayBidSetType" },
+    "ScheduleBidSubmit": { "$ref": "#/definitions/ScheduleBidSubmitType" },
+    "ForebayBidSubmit": { "$ref": "#/definitions/ForebayBidSubmitType" },
+    "BilateralBidQuery": { "$ref": "#/definitions/BilateralBidQueryType" },
+    "ScheduleBidCancel": { "$ref": "#/definitions/ScheduleBidCancelType" },
+    "ForebaySet": { "$ref": "#/definitions/ForebaySetType" },
+    "ScheduleBidSet": { "$ref": "#/definitions/ScheduleBidSetType" },
+    "DailyDispatchBidSet": { "$ref": "#/definitions/DailyDispatchBidSetType" },
+    "RealtimeEnergyBidSet": {
+      "$ref": "#/definitions/RealtimeEnergyBidSetType"
+    },
+    "ResourceSet": { "$ref": "#/definitions/ResourceSetType" },
+    "ForebayQuery": { "$ref": "#/definitions/ForebayQueryType" },
+    "OperatingReserveBidSubmit": {
+      "$ref": "#/definitions/OperatingReserveBidSubmitType"
+    },
+    "OperatingReserveBidCancel": {
+      "$ref": "#/definitions/OperatingReserveBidCancelType"
+    },
+    "MarketStatus": { "$ref": "#/definitions/MarketStatusType" },
+    "BilateralBidSubmit": { "$ref": "#/definitions/BilateralBidSubmitType" },
+    "RealtimeEnergyBidSubmit": {
+      "$ref": "#/definitions/RealtimeEnergyBidSubmitType"
+    },
+    "DailyDispatchBidQuery": {
+      "$ref": "#/definitions/DailyDispatchBidQueryType"
+    },
+    "BilateralBidCancel": { "$ref": "#/definitions/BilateralBidCancelType" },
+    "RealtimeEnergyBidCancel": {
+      "$ref": "#/definitions/RealtimeEnergyBidCancelType"
+    },
+    "forebayBidQuery": { "$ref": "#/definitions/ForebayBidQueryType" },
+    "QueryFault": { "type": "string" },
+    "DailyDispatchBidSubmit": {
+      "$ref": "#/definitions/DailyDispatchBidSubmitType"
+    },
+    "ActAsMarketParticipantSet": {
+      "$ref": "#/definitions/ActAsMarketParticipantSetType"
+    }
+  },
+  "additionalProperties": false
+}

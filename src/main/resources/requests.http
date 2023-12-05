@@ -1,0 +1,120 @@
+POST http://localhost:8080/trading HTTP/1.1
+content-type: application/json
+
+{
+  "RegistrationQuery":
+  {
+    "Action": "NORMAL",
+    "Date": "2023-08-21",
+    "DateType": "TRADE",
+    "ParticipantQuery": {
+        "ParticipantName": "TEST"
+    }
+  }
+}
+
+###
+POST http://localhost:8080/student HTTP/1.1
+content-type: application/json
+
+{
+  "name": "Sathish Palvai",
+  "birthDate": "1982-11-11"
+}
+
+###
+GET http://localhost:8080/student/all HTTP/1.1
+
+
+###
+POST http://localhost:8081/interface/submit/forebay HTTP/1.1
+content-type: application/json
+
+{
+  "ForebayBidSubmit": {
+    "ActAsMarketParticipant": {
+      "Participant": "PNAME",
+      "User": "UNAME"
+    },
+    "Date": {
+      "DeliveryDate": "2023-05-28"
+    },
+    "ForebayName": "FBNAME1",
+    "LinkedForebay": {
+      "DownstreamForebayName": "FBNAME2",
+      "TimeLag": 19,
+      "MwRatio": 9999
+    },
+    "MinDailyEnergyLimit": 1,
+    "MaxDailyEnergyLimit": 2,
+    "MaxDailyEnergyLimitReason": "EnergyReason",
+    "Reason": "OTHER",
+    "OtherReason": "Tag Code Change"
+  }
+}
+
+###
+
+POST http://localhost:8080/trading/forebayQuery HTTP/1.1
+content-type: application/json
+
+{
+  "forebayBidQuery": {
+    "actAsMarketParticipant": {
+      "participant": "PNAME",
+      "user": "UNAME"
+    },
+    "date": {
+      "deliveryDate": "2023-05-28"
+    },
+    "forebayName": "1"
+  }
+}
+
+###
+POST http://localhost:8080/trading/forebaySubmit HTTP/1.1
+content-type: application/json
+
+{
+  "forebayBidSubmit": {
+    "actAsMarketParticipant": {
+      "participant": "PNAME",
+      "user": "UNAME"
+    },
+    "date": {
+      "deliveryDate": "2023-05-28"
+    },
+    "forebayName": "FBNAME1",
+    "linkedForebay": {
+      "downstreamForebayName": "FBNAME2",
+      "timeLag": 17,
+      "mwRatio": 9999
+    },
+    "minDailyEnergyLimit": 1,
+    "maxDailyEnergyLimit": 2,
+    "maxDailyEnergyLimitReason": "EnergyReason",
+    "reason": "OTHER",
+    "otherReason": "Tag Code Change"
+  }
+}
+
+###
+
+POST http://localhost:8081/interface/query/forebay HTTP/1.1
+content-type: application/json
+
+{
+  "ForebayBidQuery": {
+    "ActAsMarketParticipant": {
+      "Participant": "PNAME",
+      "User": "UNAME"
+    },
+    "Date": {
+      "Standing": {
+           "DayOfWeek": "SUN",
+           "ExpiryDate": "2023-01-01"
+        }
+    },
+    "ForebayName": "FBNAME1"
+  }
+}
